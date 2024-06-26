@@ -196,7 +196,7 @@ class ConnectionManager {
         create: async () => {
           // round robin config
           const nextRead = reads++ % config.replication.read.length;
-          const connection = await this._connect(config.replication.read[nextRead]);
+          const connection = await this._connect({ ...config.replication.read[nextRead], queryType: 'read' });
           connection.queryType = 'read';
           return connection;
         },
@@ -212,7 +212,7 @@ class ConnectionManager {
       write: new Pool({
         name: 'sequelize:write',
         create: async () => {
-          const connection = await this._connect(config.replication.write);
+          const connection = await this._connect({ ...config.replication.write, queryType: 'write' });
           connection.queryType = 'write';
           return connection;
         },
